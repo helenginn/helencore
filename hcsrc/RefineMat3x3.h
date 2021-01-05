@@ -21,6 +21,9 @@
 
 #include "mat3x3.h"
 #include "RefinementStrategy.h"
+#include <boost/shared_ptr.hpp>
+
+typedef boost::shared_ptr<RefinementStrategy> RefinementStrategyPtr;
 
 typedef void (*CleanUp)(void *);
 
