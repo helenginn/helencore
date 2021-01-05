@@ -55,7 +55,7 @@ install_headers([
 'hcsrc/mat4x4.h',
 'hcsrc/vec3.h',
 ],
- subdir : 'helencore')
+ subdir : 'hcsrc')
 
 pkg = import('pkgconfig')
 h = ['helencore'] # subdirectories of ${prefix}/${includedir} to add to header path
