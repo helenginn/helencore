@@ -53,6 +53,7 @@ install_headers([
 'hcsrc/maths.h',
 'hcsrc/mat3x3.h',
 'hcsrc/mat4x4.h',
+'hcsrc/Timer.h', 
 'hcsrc/vec3.h',
 ],
  subdir : 'hcsrc')
