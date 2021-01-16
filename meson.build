@@ -36,6 +36,7 @@ cpp_args: ['-std=c++11'], dependencies : [ boost_dep ], install: true)
 
 install_headers([
 'hcsrc/Any.h',
+'hcsrc/Blast.h',
 'hcsrc/Converter.h',
 'hcsrc/Fibonacci.h',
 'hcsrc/FileReader.h',
