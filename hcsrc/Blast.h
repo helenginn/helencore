@@ -34,7 +34,7 @@ typedef struct
 
 } Alignment;
 
-size_t mask_length(Alignment al, size_t threshold)
+inline size_t mask_length(Alignment al, size_t threshold)
 {
 	size_t total = 0;
 
@@ -50,7 +50,7 @@ size_t mask_length(Alignment al, size_t threshold)
 	return total;
 }
 
-int choose_seed(Alignment al, size_t threshold)
+inline int choose_seed(Alignment al, size_t threshold)
 {
 	size_t length = mask_length(al, threshold);
 	
@@ -83,7 +83,7 @@ int choose_seed(Alignment al, size_t threshold)
 }
 
 /* gets alignment limits from other side */
-void find_limits(Alignment ala, Alignment alb, size_t pos,
+inline void find_limits(Alignment ala, Alignment alb, size_t pos,
                  size_t *low, size_t *high, double *pct)
 {
 	*low = 0;
@@ -114,7 +114,7 @@ void find_limits(Alignment ala, Alignment alb, size_t pos,
 	*pct = (pos - low_idx) / (high_idx - low_idx);
 }
 
-size_t best_match(Alignment ala, Alignment alb, size_t pos, int threshold)
+inline size_t best_match(Alignment ala, Alignment alb, size_t pos, int threshold)
 {
 	int best_score = -2;
 	size_t bstart = 0;
@@ -228,7 +228,7 @@ size_t best_match(Alignment ala, Alignment alb, size_t pos, int threshold)
 	return best_score;
 }
 
-void print_masks(Alignment &al)
+inline void print_masks(Alignment &al)
 {
 	for (size_t i = 0; i < al.seq.length(); i++)
 	{
@@ -244,8 +244,9 @@ void print_masks(Alignment &al)
 	std::cout << std::endl;
 }
 
-void print_map(Alignment &al)
+inline void print_map(Alignment &al)
 {
+	return;
 	for (size_t i = 0; i < al.seq.length(); i++)
 	{
 		if (al.map[i] == std::string::npos)
@@ -260,7 +261,7 @@ void print_map(Alignment &al)
 	std::cout << std::endl;
 }
 
-void loop_alignment(Alignment &ala, Alignment &alb)
+inline void loop_alignment(Alignment &ala, Alignment &alb)
                     
 {
 	int count = 0;
@@ -303,10 +304,11 @@ void loop_alignment(Alignment &ala, Alignment &alb)
 	}
 }
 
-void score_alignment(Alignment ala, Alignment alb,
+inline void score_alignment(Alignment ala, Alignment alb,
                      int *muts, int *dels)
 {
-	*dels = abs(ala.seq.length() - alb.seq.length());
+	int diff = ala.seq.length() - alb.seq.length();
+	*dels = std::abs(diff);
 	
 	int total = 0;
 	for (size_t i = 0; i < ala.seq.length(); i++)
@@ -325,12 +327,10 @@ void score_alignment(Alignment ala, Alignment alb,
 		}
 	}
 	
-	total -= *dels;
-	total /= 2;
 	*muts = total;
 }
 
-void setup_alignment(Alignment *ala, std::string a)
+inline void setup_alignment(Alignment *ala, std::string a)
 {
 	ala->seq = a;
 	ala->mask = new char[a.length()];
@@ -343,12 +343,16 @@ void setup_alignment(Alignment *ala, std::string a)
 	}
 }
 
+inline void delete_alignment(Alignment *ala)
+{
+	delete [] ala->mask;
+	delete [] ala->map;
+}
+
 inline void compare_sequences(std::string a, std::string b,
-                              int *muts, int *dels)
+                              int *muts, int *dels, bool print = false)
 {
 	int best_mut = a.length();
-	std::cout << a << std::endl;
-	std::cout << b << std::endl;
 	int improved = 0;
 	Alignment besta, bestb;
 
@@ -370,16 +374,26 @@ inline void compare_sequences(std::string a, std::string b,
 			besta = ala;
 			bestb = alb;
 		}
+		else
+		{
+			delete_alignment(&ala);
+			delete_alignment(&alb);
+		}
 	}
 	
-	std::cout << "Improved " << improved - 1 << " times." << std::endl;
-	print_masks(besta);
-	print_masks(bestb);
+	if (print)
+	{
+		print_masks(besta);
+		print_masks(bestb);
+	}
+
+	if (best_mut < a.length())
+	{
+		delete_alignment(&besta);
+		delete_alignment(&bestb);
+	}
 	
 	*muts = best_mut;
-	
-	std::cout << "Muts, dels: " << *muts << " " << *dels << std::endl;
-	std::cout << std::endl;
 }
 
 #endif
