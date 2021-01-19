@@ -138,6 +138,7 @@ inline double evaluate_CD(CorrelData &cd)
 	return r;
 }
 
+void hsv_to_rgb(float &H, float &S, float &V);
 
 #endif /* defined(__vagabond__maths__) */
 
