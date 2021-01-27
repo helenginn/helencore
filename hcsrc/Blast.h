@@ -23,6 +23,8 @@
 #include <cmath>
 #include <iostream>
 
+#define IGNORED -3
+#define SNP -2
 #define MATCHED -1
 #define UNTOUCHED 9
 
@@ -228,6 +230,127 @@ inline size_t best_match(Alignment ala, Alignment alb, size_t pos, int threshold
 	return best_score;
 }
 
+inline bool isIgnored(int mask)
+{
+	return (mask == IGNORED);
+}
+
+inline bool isSNP(int mask)
+{
+	return (mask == SNP);
+}
+
+inline bool isMatched(int mask)
+{
+	return (mask == MATCHED || mask == IGNORED);
+}
+
+inline bool isAdditional(int mask)
+{
+	return !isSNP(mask) && !isMatched(mask);
+}
+
+inline bool isValid(int map1, int map2)
+{
+	return (map1 != std::string::npos && map2 != std::string::npos);
+}
+
+inline bool isContiguous(int map1, int map2)
+{
+	return map2 == map1 + 1;
+}
+
+inline void print_alignments(Alignment &ala, Alignment &alb,
+                             std::ostringstream &leftseq, 
+                             std::ostringstream &aligned, 
+                             std::ostringstream &rightseq,
+                             std::vector<int> &indices)
+{
+	int plus = 0;
+
+	for (size_t i = 0; i < ala.seq.length(); i++)
+	{
+		size_t j = ala.map[i];
+		size_t next_j = j + 1;
+
+		if (i < ala.seq.length() - 1)
+		{
+			next_j = ala.map[i + 1];
+		}
+
+		unsigned char ac = ala.seq[i];
+		unsigned char bc = ' ';
+		
+		/* if we know where we are, use it */
+		if (j < alb.seq.size() && j != std::string::npos)
+		{
+			bc = alb.seq[j];
+
+			if (alb.seq[j] == ' ')
+			{
+				bc = '?';
+			}
+		}
+		
+		if (ac == ' ')
+		{
+			ac = '?';
+		}
+
+		if (isIgnored(ala.mask[i]) ||  // just a space
+		    (!isAdditional(ala.mask[i])))// && isValid(j, next_j) &&
+		   // (isContiguous(j, next_j) || !isValid(j, next_j))))
+		{
+			leftseq << ac;
+			rightseq << bc;
+			plus = 0;
+
+			if (ala.mask[i] == MATCHED)
+			{
+				aligned << ".";
+			}
+			else if (ala.mask[i] == SNP)
+			{
+				aligned << "*";
+			}
+			else 
+			{
+				aligned << ".";
+			}
+
+			indices.push_back(j);
+		}
+		if (isValid(j, next_j) && !isContiguous(j, next_j)
+		    && !isIgnored(ala.mask[i]))
+		{
+			/* some in alignment B which is not in alignment A */
+
+			size_t start = j + 1;
+			size_t end = next_j;
+
+			for (size_t k = start; k < end; k++)
+			{
+				leftseq << ' ';
+				bc = alb.seq[k];
+				rightseq << bc;
+				aligned << "-";
+				indices.push_back(k);
+			}
+		}
+		else if (!isIgnored(ala.mask[i]) && ala.map[i] == std::string::npos)
+		{
+			/* have something in A not in B */
+			leftseq << ac;
+			rightseq << ' ';
+			aligned << "+";
+			plus++;
+			indices.push_back(j + plus);
+
+			continue;
+		}
+	}
+}
+
 inline void print_masks(Alignment &al)
 {
 	for (size_t i = 0; i < al.seq.length(); i++)
@@ -262,7 +385,6 @@ inline void print_map(Alignment &al)
 }
 
 inline void loop_alignment(Alignment &ala, Alignment &alb)
-                    
 {
 	int count = 0;
 	int threshold = 6;
@@ -295,7 +417,7 @@ inline void loop_alignment(Alignment &ala, Alignment &alb)
 			if (!more)
 			{
 				threshold--;
-				if (threshold < 0)
+				if (threshold < 1)
 				{
 					break;
 				}
@@ -313,7 +435,7 @@ inline void score_alignment(Alignment ala, Alignment alb,
 	int total = 0;
 	for (size_t i = 0; i < ala.seq.length(); i++)
 	{
-		if (ala.mask[i] != MATCHED)
+		if ((int)ala.mask[i] != MATCHED)
 		{
 			total++;
 		}
@@ -321,7 +443,7 @@ inline void score_alignment(Alignment ala, Alignment alb,
 
 	for (size_t i = 0; i < alb.seq.length(); i++)
 	{
-		if (alb.mask[i] != MATCHED)
+		if ((int)alb.mask[i] != MATCHED)
 		{
 			total++;
 		}
@@ -349,14 +471,15 @@ inline void delete_alignment(Alignment *ala)
 	delete [] ala->map;
 }
 
-inline void compare_sequences(std::string a, std::string b,
-                              int *muts, int *dels, bool print = false)
+inline void compare_sequences_and_alignments(std::string a, std::string b,
+                                             int *muts, int *dels, 
+                                             Alignment &besta, 
+                                             Alignment &bestb, int tries = 4)
 {
-	int best_mut = a.length();
+	int best_mut = a.length() + 1; // to ensure no double deletion
 	int improved = 0;
-	Alignment besta, bestb;
 
-	for (size_t i = 0; i < 4; i++)
+	for (size_t i = 0; i < tries; i++)
 	{
 		int mut;
 	
@@ -381,19 +504,181 @@ inline void compare_sequences(std::string a, std::string b,
 		}
 	}
 	
-	if (print)
+	*muts = best_mut;
+}
+
+inline void match_spaces(Alignment &ala)
+{
+	for (size_t i = 0; i < ala.seq.size(); i++)
 	{
-		print_masks(besta);
-		print_masks(bestb);
+		if (ala.seq[i] == ' ')
+		{
+			ala.mask[i] = IGNORED;
+		}
+	}
+}
+
+inline void tidy_alignments(Alignment &ala, Alignment &alb)
+{
+	match_spaces(ala);
+	match_spaces(alb);
+
+	int start = 0;
+	for (size_t i = 0; i < ala.seq.size(); i++)
+	{
+		if (ala.mask[i] != MATCHED)
+		{
+			start++;
+		}
+		else
+		{
+			break;
+		}
 	}
 
-	if (best_mut < a.length())
+	for (size_t i = start; i < ala.seq.size(); i++)
 	{
-		delete_alignment(&besta);
-		delete_alignment(&bestb);
+		size_t amap = ala.map[i];
+		
+		/* nothing to see here */
+		if (isMatched(ala.mask[i]))
+		{
+			if (isIgnored(ala.mask[i]) &&
+			    ala.map[i - 1] != std::string::npos)
+			{
+				ala.map[i] = ala.map[i - 1] + 1;
+			}
+
+			continue;
+		}
+
+		/* something isn't matching - either del or SNP */ 
+		/* find previously identified residue in alb    */
+
+		/* save our position for later */
+		int si = i;
+		
+		/* we may still be in the middle of an A-extension */
+		if (ala.map[i - 1] == std::string::npos)
+		{
+			continue;
+		}
+
+		/* pick up from before we branched */
+		int j = ala.map[i - 1] + 1;
+
+		int sj = j;
+		
+		/* stop if our calculated J is off the end of B */
+		if (j > alb.seq.size())
+		{
+			continue;
+		}
+		
+		if (isIgnored(alb.mask[j]))
+		{
+			ala.mask[i] = IGNORED;
+			ala.map[i] = j;
+
+			continue;
+		}
+
+		bool failed = false;
+		bool was_a = false;
+		
+		/* now we march forwards, counting who runs out of UNMATCHED first */
+		/* MATCHED check comes first */
+		while (!failed)
+		{
+			if (i >= ala.seq.size())
+			{
+				// blargh, ends, ignore for now
+				was_a = true;
+				failed = true;
+				break;
+			}
+			if (j >= alb.seq.size())
+			{
+				failed = true;
+				break;
+			}
+			
+			int amask = ala.mask[i];
+			int bmask = alb.mask[j];
+
+			if (!isMatched(amask) && !isMatched(bmask))
+			{
+				/* nothing's touched base yet */
+
+				i++; j++;
+			}
+			else if (isMatched(amask) && !isMatched(bmask))
+			{
+				/* woops, a made sense again first */
+				was_a = true;
+				failed = true;
+				continue;
+			}
+			else if (isMatched(bmask) && !isMatched(amask))
+			{
+				/* b made sense again first */
+				failed = true;
+				continue;
+			}
+			else if (isMatched(bmask) && isMatched(amask))
+			{
+				/* both rematched simultaneously */
+				failed = false;
+				break;
+			}
+		}
+		
+		/* if we had equal numbers of matched, we must mark them
+		 * as SNPS */
+		if (!failed)
+		{
+			int ei = i;
+			if (ei == 0)
+			{
+				continue;
+			}
+
+			for (size_t k = si; k < ei && k < ala.seq.size(); k++)
+			{
+				ala.map[k] = ala.map[k-1] + 1;
+				if (ala.mask[k] != IGNORED)
+				{
+					ala.mask[k] = SNP;
+				}
+			}
+
+			int ej = j;
+			if (sj == 0)
+			{
+				continue;
+			}
+
+			for (size_t j = sj; j < ei && j < alb.seq.size(); j++)
+			{
+				alb.map[j] = alb.map[j-1] + 1;
+				if (alb.mask[j] != IGNORED)
+				{
+					alb.mask[j] = SNP;
+				}
+			}
+		}
 	}
+}
+
+inline void compare_sequences(std::string a, std::string b,
+                              int *muts, int *dels)
+{
+	Alignment besta, bestb;
 	
-	*muts = best_mut;
+	compare_sequences_and_alignments(a, b, muts, dels, besta, bestb);
+
+	delete_alignment(&besta);
+	delete_alignment(&bestb);
 }
 
 #endif
