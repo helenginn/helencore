@@ -377,7 +377,6 @@ inline void print_masks(Alignment &al)
 
 inline void print_map(Alignment &al)
 {
-	return;
 	for (size_t i = 0; i < al.seq.length(); i++)
 	{
 		if (al.map[i] == std::string::npos)
