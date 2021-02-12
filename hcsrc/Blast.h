@@ -501,13 +501,10 @@ inline void compare_sequences_and_alignments(std::string a, std::string b,
 		{
 			improved++;
 			best_mut = mut;
+			delete_alignment(&besta);
+			delete_alignment(&bestb);
 			besta = ala;
 			bestb = alb;
-		}
-		else
-		{
-			delete_alignment(&ala);
-			delete_alignment(&alb);
 		}
 	}
 	
@@ -681,6 +678,8 @@ inline void compare_sequences(std::string a, std::string b,
                               int *muts, int *dels)
 {
 	Alignment besta, bestb;
+	setup_alignment(&besta, a);
+	setup_alignment(&bestb, b);
 	
 	compare_sequences_and_alignments(a, b, muts, dels, besta, bestb);
 
