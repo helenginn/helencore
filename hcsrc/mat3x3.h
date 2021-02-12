@@ -120,6 +120,10 @@ mat3x3 mat3x3_ortho_axes(vec3 cVec);
  * vector bases */
 mat3x3 mat3x3_rhbasis(vec3 aVec, vec3 cVec);
 
+/** Calculates a right-handed matrix based on two, not necessarily
+ * right-angled basis vectors. */
+mat3x3 mat3x3_rhbasis_no_norm(vec3 aVec, vec3 bVec);
+
 /** Find the rotation matrix which maps vec1 as closely as possible
  * onto vec2 by rotating around 'axis'. "best" returns the final
  * closest angle between vec2 and vec1 after rotation. If unity

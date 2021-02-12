@@ -347,6 +347,27 @@ mat3x3 mat3x3_ortho_axes(vec3 cVec)
 	return mat;
 }
 
+mat3x3 mat3x3_rhbasis_no_norm(vec3 aVec, vec3 bVec)
+{
+	vec3 cVec = vec3_cross_vec3(aVec, bVec);
+
+	mat3x3 mat;
+
+	mat.vals[0] = aVec.x;
+	mat.vals[1] = cVec.x;
+	mat.vals[2] = bVec.x;
+
+	mat.vals[3] = aVec.y;
+	mat.vals[4] = cVec.y;
+	mat.vals[5] = bVec.y;
+
+	mat.vals[6] = aVec.z;
+	mat.vals[7] = cVec.z;
+	mat.vals[8] = bVec.z;
+
+	return mat;
+}
+
 mat3x3 mat3x3_rhbasis(vec3 aVec, vec3 bVec)
 {
 	vec3_set_length(&aVec, 1);

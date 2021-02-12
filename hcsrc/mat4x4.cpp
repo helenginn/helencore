@@ -211,6 +211,15 @@ mat4x4 mat4x4_from_rot_trans(mat3x3 rot, vec3 trans)
 	return mat4x4_mult_mat4x4(rot4, trans4);
 }
 
+vec3 mat4x4_get_trans(mat4x4 &mat)
+{
+	vec3 trans = empty_vec3();
+	trans.x = mat.vals[3];
+	trans.y = mat.vals[7];
+	trans.z = mat.vals[11];
+	return trans;
+}
+
 mat3x3 mat4x4_get_rot(mat4x4 &mat)
 {
 	mat3x3 rot = make_mat3x3();
