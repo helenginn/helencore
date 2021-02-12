@@ -345,6 +345,13 @@ inline void print_alignments(Alignment &ala, Alignment &alb,
 			rightseq << ' ';
 			aligned << "+";
 			plus++;
+			
+			if (!isValid(j, j))
+			{
+				indices.push_back(i + plus);
+				continue;
+			}
+
 			indices.push_back(j + plus);
 
 			continue;
