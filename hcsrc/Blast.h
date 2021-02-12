@@ -22,6 +22,7 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
+#include <sstream>
 
 #define IGNORED -3
 #define SNP -2
