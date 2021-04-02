@@ -30,6 +30,7 @@ bool file_exists(const std::string& name);
 std::string getPath(std::string whole);
 std::string getFilename(std::string filename);
 std::string getBaseFilename(std::string filename);
+std::string getExtension(std::string filename);
 std::string getBaseFilenameWithPath(std::string filename);
 std::string findNextFilename(std::string file);
 

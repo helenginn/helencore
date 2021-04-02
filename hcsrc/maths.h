@@ -120,8 +120,8 @@ inline void means_stdevs_CD(CorrelData &cd, double *xm, double *ym,
                             double *xs, double *ys)
 {
 	*xm = cd.sum_x / cd.sum_w;
-	*ym = cd.sum_y / cd.sum_w;
 	*xs = sqrt((cd.sum_xx / cd.sum_w) - (*xm) * (*xm));
+	*ym = cd.sum_y / cd.sum_w;
 	*ys = sqrt((cd.sum_yy / cd.sum_w) - (*ym) * (*ym));
 }
 

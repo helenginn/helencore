@@ -97,6 +97,18 @@ std::string getBaseFilenameWithPath(std::string filename)
 	return fName.substr(0, pos);
 }
 
+std::string getExtension(std::string filename)
+{
+	std::string fName = getFilename(filename);
+	size_t pos = fName.rfind(".");
+	if (pos == std::string::npos || pos == fName.length() - 1)  //No extension
+	{
+		return "";
+	}
+
+	return fName.substr(pos + 1);
+}
+
 std::string getBaseFilename(std::string filename)
 {
 	std::string fName = getFilename(filename);

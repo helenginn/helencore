@@ -33,6 +33,13 @@ public:
 		_fine = fine;
 	}
 	
+	void clear()
+	{
+		wall = 0;
+		accumulative = 0;
+		_milliseconds = 0;
+	}
+	
 	void quickReport();
 	void report();
 private:
