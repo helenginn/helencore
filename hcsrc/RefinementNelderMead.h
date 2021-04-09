@@ -29,16 +29,16 @@ typedef std::map<int, double> StepMap;
 class RefinementNelderMead : public RefinementStrategy
 {
 public:
+	RefinementNelderMead();
 	void init();
-	RefinementNelderMead() : RefinementStrategy() { init(); };
 	virtual void refine();
 
 	virtual void clearParameters();
 private:
-	double alpha;
-	double gamma;
-	double rho;
-	double sigma;
+	double _alpha;
+	double _gamma;
+	double _rho;
+	double _sigma;
 	
 	StepMap _stepMap;
 	std::string _lastTag;
