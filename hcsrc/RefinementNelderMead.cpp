@@ -20,6 +20,12 @@
 #include <algorithm>
 #include <iostream>
 
+RefinementNelderMead::RefinementNelderMead() : RefinementStrategy()
+{
+	init();
+
+}
+
 bool RefinementNelderMead::converged()
 {
 	for (size_t i = 0; i < parameterCount(); i++)
@@ -124,17 +130,17 @@ TestPoint RefinementNelderMead::reflectOrExpand(std::vector<double> centroid, do
 
 TestPoint RefinementNelderMead::reflectedPoint(std::vector<double> centroid)
 {
-	return reflectOrExpand(centroid, alpha);
+	return reflectOrExpand(centroid, _alpha);
 }
 
 TestPoint RefinementNelderMead::expandedPoint(std::vector<double> centroid)
 {
-	return reflectOrExpand(centroid, gamma);
+	return reflectOrExpand(centroid, _gamma);
 }
 
 TestPoint RefinementNelderMead::contractedPoint(std::vector<double> centroid)
 {
-	return reflectOrExpand(centroid, rho);
+	return reflectOrExpand(centroid, _rho);
 }
 
 void RefinementNelderMead::reduction()
@@ -147,7 +153,7 @@ void RefinementNelderMead::reduction()
 
 		std::vector<double> diffVec = point.first;
 		subtractPoints(&diffVec, bestPoint.first);
-		scalePoint(&diffVec, sigma);
+		scalePoint(&diffVec, _sigma);
 		std::vector<double> finalVec = bestPoint.first;
 		addPoints(&finalVec, diffVec);
 
@@ -166,6 +172,7 @@ static bool testPointWorseThanTestPoint(TestPoint one, TestPoint two)
 void RefinementNelderMead::orderTestPoints()
 {
 	std::sort(testPoints.begin(), testPoints.end(), testPointWorseThanTestPoint);
+	
 }
 
 void RefinementNelderMead::evaluateTestPoint(int num)
@@ -204,6 +211,8 @@ void RefinementNelderMead::refine()
 
 	if (parameterCount() == 0)
 	return;
+	
+	init();
 
 	/* Each test point is a vertex? */
 	for (size_t i = 0; i < testPoints.size(); i++)
@@ -248,7 +257,8 @@ void RefinementNelderMead::refine()
 
 		TestPoint reflected = reflectedPoint(centroid);
 
-		if (reflected.second < testPoints[1].second)
+		if (reflected.second < testPoints[1].second &&
+		    reflected.second > testPoints[0].second)
 		{
 			setWorstTestPoint(reflected);
 			continue;
@@ -286,10 +296,19 @@ void RefinementNelderMead::refine()
 
 void RefinementNelderMead::init()
 {
-	alpha = 1;
-	gamma = 2;
-	rho = -0.5;
-	sigma = 0.5;
+	_alpha = 1;
+	_gamma = 2;
+	_rho = -0.5;
+	_sigma = 0.5;
+	
+	if (parameterCount() > 0)
+	{
+		/* ANMS, paper Gao & Han, paper notation in comments */
+		int n = parameterCount();
+		_gamma = 1 + 2 / n; /* beta */
+		_sigma = 0.75 - 1 / (2 * n); /* gamma */
+		_rho = 1 / (1 / n); /* delta */
+	}
 }
 
 
