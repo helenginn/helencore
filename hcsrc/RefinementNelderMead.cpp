@@ -195,6 +195,55 @@ void RefinementNelderMead::clearParameters()
 	testPoints.clear();
 }
 
+void RefinementNelderMead::setParametersForPoint(int i, double mult)
+{
+	for (int j = 0; j < parameterCount(); j++)
+	{
+		/* First test point is in the centre */
+		if (i == 0)
+		{
+			testPoints[i].first[j] = getValueForParam(j);
+		}
+
+		/* All other test points increase the step size by a
+		* certain amount in one direction. */
+		if (i > 0)
+		{
+			int minJ = i - 1;
+			double scale = 1;
+
+			testPoints[i].first[j] = testPoints[0].first[j] + 
+			(j == minJ) * scale * mult * _params[j].step_size;
+		}
+	}
+}
+
+void RefinementNelderMead::setInitialParameters()
+{
+	double first = evaluationFunction(evaluateObject);
+
+	/* Each test point is a vertex? */
+	for (size_t i = 0; i < testPoints.size(); i++)
+	{
+		testPoints[i].second = 0;
+		testPoints[i].first.resize(parameterCount());
+
+		setParametersForPoint(i, 1);
+		evaluateTestPoint(i);
+		continue;
+		double right = testPoints[i].second;
+		setParametersForPoint(i, -1);
+		evaluateTestPoint(i);
+		double left = testPoints[i].second;
+		
+		if (right < left)
+		{
+			setParametersForPoint(i, 1);
+			evaluateTestPoint(i);
+		}
+	}
+}
+
 void RefinementNelderMead::refine()
 {
 	RefinementStrategy::refine();
@@ -205,38 +254,13 @@ void RefinementNelderMead::refine()
 	if (parameterCount() == 0)
 	return;
 
-	/* Each test point is a vertex? */
-	for (size_t i = 0; i < testPoints.size(); i++)
-	{
-		testPoints[i].second = 0;
-		testPoints[i].first.resize(parameterCount());
-
-		for (int j = 0; j < parameterCount(); j++)
-		{
-			/* First test point is in the centre */
-			if (i == 0)
-			{
-				testPoints[i].first[j] = getValueForParam(j);
-			}
-
-			/* All other test points increase the step size by a
- 			 * certain amount in one direction. */
-			if (i > 0)
-			{
-				int minJ = i - 1;
-				double scale = 1;
-
-				testPoints[i].first[j] = testPoints[0].first[j] + 
-				(j == minJ) * scale * _params[j].step_size;
-			}
-		}
-	}
+	setInitialParameters();
 
 	for (size_t i = 0; i < testPoints.size(); i++)
 	{
 		evaluateTestPoint(i);
 	}
-
+	
 	int count = 0;
 
 	while ((!converged() && count < maxCycles))

@@ -46,6 +46,8 @@ private:
 	std::vector<TestPoint> testPoints;
 
 	void setWorstTestPoint(TestPoint &newPoint);
+	void setInitialParameters();
+	void setParametersForPoint(int i, double mult = 1);
 	TestPoint *worstTestPoint();
 	void orderTestPoints();
 	void evaluateTestPoint(int num);
