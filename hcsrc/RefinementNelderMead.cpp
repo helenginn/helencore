@@ -261,9 +261,8 @@ void RefinementNelderMead::refine()
 	if (parameterCount() == 0)
 	return;
 	
-	init();
-
 	setInitialParameters();
+	init();
 
 	for (size_t i = 0; i < testPoints.size(); i++)
 	{
@@ -322,16 +321,16 @@ void RefinementNelderMead::init()
 {
 	_alpha = 1;
 	_gamma = 2;
-	_rho = -0.5;
+	_rho = 0.5;
 	_sigma = 0.5;
 	
-	if (parameterCount() > 0)
+	if (parameterCount() > 0 && false)
 	{
 		/* ANMS, paper Gao & Han, paper notation in comments */
-		int n = parameterCount();
+		int n = 2;//parameterCount();
 		_gamma = 1 + 2 / n; /* beta */
 		_sigma = 0.75 - 1 / (2 * n); /* gamma */
-		_rho = 1 / (1 / n); /* delta */
+		_rho = 1 - (1 / n); /* delta */
 	}
 }
 
