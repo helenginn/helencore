@@ -23,7 +23,7 @@
 RefinementNelderMead::RefinementNelderMead() : RefinementStrategy()
 {
 	init();
-
+	_flip = false;
 }
 
 bool RefinementNelderMead::converged()
@@ -237,7 +237,12 @@ void RefinementNelderMead::setInitialParameters()
 
 		setParametersForPoint(i, 1);
 		evaluateTestPoint(i);
-		continue;
+
+		if (!_flip)
+		{
+			continue;
+		}
+
 		double right = testPoints[i].second;
 		setParametersForPoint(i, -1);
 		evaluateTestPoint(i);

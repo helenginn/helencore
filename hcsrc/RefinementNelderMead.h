@@ -32,6 +32,11 @@ public:
 	RefinementNelderMead();
 	void init();
 	virtual void refine();
+	
+	void setFlip(bool flip = true)
+	{
+		_flip = flip;
+	}
 
 	virtual void clearParameters();
 private:
@@ -39,6 +44,7 @@ private:
 	double _gamma;
 	double _rho;
 	double _sigma;
+	bool _flip;
 	
 	StepMap _stepMap;
 	std::string _lastTag;
