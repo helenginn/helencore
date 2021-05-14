@@ -19,6 +19,22 @@ struct vec3
 	double x;
 	double y;
 	double z;
+
+	vec3 &operator+=(const vec3 &add)
+	{
+		x += add.x;
+		y += add.y;
+		z += add.z;
+		return *this;
+	}
+
+	vec3 &operator-=(const vec3 &minus)
+	{
+		x -= minus.x;
+		y -= minus.y;
+		z -= minus.z;
+		return *this;
+	}
 };
 
 /** Not really used much here */
