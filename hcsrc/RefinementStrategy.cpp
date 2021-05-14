@@ -163,8 +163,12 @@ void RefinementStrategy::reportProgress(double score)
 		return;
 	}
 	
-	if (cycleNum % 30 == 0)
+	if (cycleNum > 0 && cycleNum % 30 == 0)
 	{
+		double reduction = (startingScore - score) / startingScore;
+		std::cout << std::setprecision(4);
+		std::cout << " (" << std::fixed << -reduction * 100 << "%)";
+
 		std::cout << std::endl;
 	}
 
