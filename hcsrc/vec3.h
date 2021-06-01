@@ -48,7 +48,10 @@ struct vec2
 double vec3_length(vec3 &vec);
 
 /** Returns the square of the vector by pythagoras */
-double vec3_sqlength(vec3 &vec);
+inline double vec3_sqlength(vec3 &vec)
+{
+	return (vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}
 
 /** Rescale the length of the vector to a given value by
  * altering internal components */
