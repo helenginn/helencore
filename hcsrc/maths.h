@@ -140,5 +140,48 @@ inline double evaluate_CD(CorrelData &cd)
 
 void hsv_to_rgb(float &H, float &S, float &V);
 
+template <class T>
+inline void val_to_cluster4x_colour(double val, T *red, T *green, T *blue)
+{
+	if (val > 2) val = 2;
+
+	if (val != val) /* we go grey */
+	{
+		*red = 100;
+		*green = 100;
+		*blue = 100;
+	}
+	else if (val <= 0) /* we go black */
+	{
+		val = std::min(-val, 1.);
+		*red = 0;
+		*green = 0;
+		*blue = 255 - val * 255;
+	}
+	else if (val < 0.5)
+	{
+		/* we go blue. */
+		val = (0.5 - val ) * 2.;
+		*red = 255 - val * 255;
+		*green = 255 - val * 255;
+		*blue = 255;
+	}
+	else if (val >= 1.0) /* We go yellow. */
+	{
+		val -= 1; 
+		*red = 255;
+		*green = val * 255;
+		*blue = 0;
+	}
+	else if (val >= 0.5) /* We go red. */
+	{
+		val = (val - 0.5) * 2.0;
+		*red = 255;
+		*green = 255 - val * 255;
+		*blue = 255 - val * 255;
+	}
+
+}
+
 #endif /* defined(__vagabond__maths__) */
 
