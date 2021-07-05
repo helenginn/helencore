@@ -19,12 +19,16 @@
 /* holds a pointer and will provide getters and setters for any
  * double of your choice */
 
+typedef void (*Refresh)(void *);
+
 class Any
 {
 public:
 	Any(double *ptr)
 	{
 		_ptr = ptr;
+		_g = NULL;
+		_gobj = NULL;
 	}
 	
 	static double get(void *object)
@@ -34,11 +38,24 @@ public:
 	
 	static void set(void *object, double val)
 	{
-		*(static_cast<Any *>(object)->_ptr) = val;
+		Any *any = static_cast<Any *>(object);
+		*(any->_ptr) = val;
+		if (any->_g != NULL)
+		{
+			(*any->_g)(any->_gobj);
+		}
+	}
+	
+	void setRefresh(Refresh g, void *object)
+	{
+		_g = g;
+		_gobj = object;
 	}
 
 private:
 	double *_ptr;
+	Refresh _g;
+	void *_gobj;
 
 };
 
