@@ -28,12 +28,30 @@ struct vec3
 		return *this;
 	}
 
+	vec3 operator+(const vec3 &two)
+	{
+		vec3 v;
+		v.x = x + two.x;
+		v.y = y + two.y;
+		v.z = z + two.z;
+		return v;
+	}
+
 	vec3 &operator-=(const vec3 &minus)
 	{
 		x -= minus.x;
 		y -= minus.y;
 		z -= minus.z;
 		return *this;
+	}
+
+	vec3 operator-(const vec3 &two)
+	{
+		vec3 v;
+		v.x = x - two.x;
+		v.y = y - two.y;
+		v.z = z - two.z;
+		return v;
 	}
 };
 
