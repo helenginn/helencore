@@ -62,7 +62,7 @@ install_headers([
 pkg = import('pkgconfig')
 h = ['helencore'] # subdirectories of ${prefix}/${includedir} to add to header path
 pkg.generate([helencore],
-             subdirs : ['helencore'],
+             subdirs : [''],
              version : '1.0',
              name : 'helencore',
              filebase : 'helencore',
