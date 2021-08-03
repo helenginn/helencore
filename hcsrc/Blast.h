@@ -542,8 +542,6 @@ inline void tidy_alignments(Alignment &ala, Alignment &alb)
 
 	for (size_t i = start; i < ala.seq.size(); i++)
 	{
-		size_t amap = ala.map[i];
-		
 		/* nothing to see here */
 		if (isMatched(ala.mask[i]))
 		{
@@ -656,7 +654,6 @@ inline void tidy_alignments(Alignment &ala, Alignment &alb)
 				}
 			}
 
-			int ej = j;
 			if (sj == 0)
 			{
 				continue;
