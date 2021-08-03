@@ -45,6 +45,19 @@ void trim(std::string& str);
 void to_lower(std::string &str);
 void to_upper(std::string &str);
 
+std::string defenestrate(std::string str);
+
+inline void pad(std::string &str, char ch, size_t length)
+{
+	if (str.length() >= length)
+	{
+		return;
+	}
+
+	std::string padding = std::string(length - str.length(), ch);
+	str = padding + str;
+}
+
 void print_cc_diff(double diff, int limit);
 
 inline std::vector<std::string> glob(const std::string& pattern) {

@@ -63,6 +63,21 @@ std::string get_file_contents(std::string filename)
 	throw(errno);
 }
 
+std::string defenestrate(std::string str)
+{
+	std::ostringstream ss;
+	
+	for (size_t i = 0; i < str.length(); i++)
+	{
+		if (str[i] != '\r')
+		{
+			ss << str[i];
+		}
+	}
+
+	return ss.str();
+}
+
 std::string getPath(std::string whole)
 {
 	size_t pos = whole.rfind("/");
