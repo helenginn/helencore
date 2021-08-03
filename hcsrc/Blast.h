@@ -481,7 +481,7 @@ inline void delete_alignment(Alignment *ala)
 inline void compare_sequences_and_alignments(std::string a, std::string b,
                                              int *muts, int *dels, 
                                              Alignment &besta, 
-                                             Alignment &bestb, int tries = 4)
+                                             Alignment &bestb, int tries = 10)
 {
 	int best_mut = a.length() + 1; // to ensure no double deletion
 	int improved = 0;
