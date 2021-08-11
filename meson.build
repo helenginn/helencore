@@ -15,10 +15,9 @@ run_command('get_hash.sh')
 helencore = library('helencore',
 'hcsrc/libica/svdcmp.cpp',
 'hcsrc/libica/matrix.cpp',
-#'hcsrc/libica/fastICA.c',
-#'hcsrc/libica/libICA.c',
 'hcsrc/lbfgs.c',
 'hcsrc/Converter.cpp',
+'hcsrc/Canonical.cpp',
 'hcsrc/Fibonacci.cpp',
 'hcsrc/FileReader.cpp',
 'hcsrc/mat3x3.cpp',
@@ -32,12 +31,14 @@ helencore = library('helencore',
 'hcsrc/RefinementStrategy.cpp', 
 'hcsrc/Timer.cpp', 
 'hcsrc/vec3.cpp',
-cpp_args: ['-std=c++11'], dependencies : [ boost_dep ], install: true)
+link_args: ['-mmacosx-version-min=10.14'],
+cpp_args: ['-std=c++11', '-mmacosx-version-min=10.14'], dependencies : [ boost_dep ], install: true)
 
 install_headers([
 'hcsrc/Any.h',
 'hcsrc/Blast.h',
 'hcsrc/Converter.h',
+'hcsrc/Canonical.h',
 'hcsrc/Fibonacci.h',
 'hcsrc/FileReader.h',
 'hcsrc/font.h',
