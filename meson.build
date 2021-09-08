@@ -1,5 +1,10 @@
 project('helencore', 'cpp', 'c')
 boost_dep = dependency('boost')
+arg_list = []
+
+if (host_machine.system() == 'darwin')
+  arg_list += '-mmacosx-version-min=10.14'
+endif
 
 helencore_scs = false
 
@@ -31,8 +36,8 @@ helencore = library('helencore',
 'hcsrc/RefinementStrategy.cpp', 
 'hcsrc/Timer.cpp', 
 'hcsrc/vec3.cpp',
-link_args: ['-mmacosx-version-min=10.14'],
-cpp_args: ['-std=c++11', '-mmacosx-version-min=10.14'], dependencies : [ boost_dep ], install: true)
+link_args: arg_list,
+cpp_args: arg_list, dependencies : [ boost_dep ], install: true)
 
 install_headers([
 'hcsrc/Any.h',
