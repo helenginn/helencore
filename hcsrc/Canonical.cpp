@@ -21,7 +21,7 @@
 #include <iomanip>
 #include <cmath>
 #include <algorithm>
-#include <libica/svdcmp.h>
+#include "libica/svdcmp.h"
 #include <hcsrc/maths.h>
 
 void Canonical::setupMatrix(Matrix *mat, int rows, int cols)
