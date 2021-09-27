@@ -62,7 +62,6 @@ private:
 	int _nSamples;
 	int _m;
 	int _n;
-	int _dim;
 	int _d;
 	
 	SVD _mmCC, _nnCC;

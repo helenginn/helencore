@@ -198,34 +198,32 @@ void Canonical::freeSVD(SVD *cc)
 Canonical::Canonical(int m, int n)
 {
 	_run = false;
-	if (m <= 0 || n <= 0)
+	if (m <= 1 || n <= 1)
 	{
 		throw -1;
 	}
 	_m = m;
 	_n = n;
 	_nSamples = 0;
-	_dim = std::max(_m, _n);
-	_d = _dim;
 }
 
 void Canonical::sizeHint(int n)
 {
 	_nSamples = n;
-	_mVecs.reserve(n * _dim);
-	_nVecs.reserve(n * _dim);
+	_mVecs.reserve(n * _m);
+	_nVecs.reserve(n * _n);
 }
 
 void Canonical::addVecs(std::vector<double> &ms, std::vector<double> &ns)
 {
-	if (_mVecs.size() + ms.size() > _nSamples * _dim)
+	if (_mVecs.size() + ms.size() > _nSamples * _m)
 	{
 		_mVecs.reserve(_mVecs.size() + ms.size());
 	}
 
-	if (_nVecs.size() + ns.size() > _nSamples * _dim)
+	if (_nVecs.size() + ns.size() > _nSamples * _n)
 	{
-		_nVecs.reserve(_nVecs.size() + ms.size());
+		_nVecs.reserve(_nVecs.size() + ns.size());
 	}
 
 	_mVecs.insert(_mVecs.end(), ms.begin(), ms.end());
@@ -269,7 +267,7 @@ void Canonical::run()
 	int d1 = _m;
 	int d2 = _n;
 	
-	for (size_t i = 0; i < _dim; i++)
+	for (size_t i = 0; i < _m; i++)
 	{
 		if (_mmCC.w[i] < 1e-6)
 		{
@@ -278,13 +276,18 @@ void Canonical::run()
 		}
 	}
 
-	for (size_t i = 0; i < _dim; i++)
+	for (size_t i = 0; i < _n; i++)
 	{
 		if (_nnCC.w[i] < 1e-6)
 		{
 			d2 = i;
 			break;
 		}
+	}
+	
+	if (d1 == 0 || d2 == 0)
+	{
+		throw 1;
 	}
 
 	SVD tmp;
@@ -313,7 +316,7 @@ void Canonical::run()
 	_d = std::min(d1, d2);
 
 	setupMatrix(&_mBasis, _m, _d);
-	setupMatrix(&_nBasis, _m, _d);
+	setupMatrix(&_nBasis, _n, _d);
 
 	for (size_t i = 0; i < _m; i++)
 	{
@@ -404,7 +407,7 @@ void Canonical::run()
 
 double Canonical::correlation()
 {
-	_nSamples = _mVecs.size() / _dim;
+	_nSamples = _mVecs.size() / _m;
 	double best = 0;
 
 	for (size_t j = 0; j < 1; j++)
