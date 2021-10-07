@@ -169,7 +169,7 @@ void trim(std::string &str)
 	else str.erase(str.begin(), str.end());
 }
 
-void print_cc_diff(double diff, int limit)
+void print_cc_diff(std::ostream *stream, double diff, int limit)
 {
 	if (diff != diff)
 	{
@@ -189,17 +189,17 @@ void print_cc_diff(double diff, int limit)
 		signs = limit;
 	}
 
-	std::cout << " ";
+	*stream << " ";
 	for (int j = 0; j < signs; j++)
 	{
-		std::cout << (dir ? "+" : "-");
+		*stream << (dir ? "+" : "-");
 	}
 
 	if (limit > 0)
 	{
 		for (int j = signs; j < 20; j++)
 		{
-			std::cout << " ";	
+			*stream << " ";	
 		}
 	}
 }

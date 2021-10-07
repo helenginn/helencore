@@ -58,7 +58,7 @@ inline void pad(std::string &str, char ch, size_t length)
 	str = padding + str;
 }
 
-void print_cc_diff(double diff, int limit);
+void print_cc_diff(std::ostream *_stream, double diff, int limit);
 
 inline std::vector<std::string> glob(const std::string& pattern) {
 	using namespace std;
