@@ -66,22 +66,14 @@ typedef struct
 class RefinementStrategy
 {
 public:
-	RefinementStrategy()
+	RefinementStrategy();
+	
+	void setStream(std::ostream *other)
 	{
-		_enough = false;
-		evaluationFunction = NULL;
-		_partial = NULL;
-		maxCycles = 30;
-		cycleNum = 0;
-		startingScore = 0;
-		_verbose = false;
-		_silent = false;
-		_changed = -1;
-		finishFunction = NULL;
-		_mock = false;
-		_improvement = 0;
-		_toDegrees = false;
-	};
+		_stream = other;
+	}
+	
+	void outputStream();
 
 	virtual ~RefinementStrategy() {};
 
@@ -235,6 +227,7 @@ protected:
 	void reportProgress(double score);
 	void finish();
 
+	std::ostream *_stream;
 	Timer _timer;
 };
 

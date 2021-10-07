@@ -24,6 +24,24 @@
 #include <iostream>
 #include <iomanip>
 
+RefinementStrategy::RefinementStrategy()
+{
+	_enough = false;
+	evaluationFunction = NULL;
+	_partial = NULL;
+	maxCycles = 30;
+	cycleNum = 0;
+	startingScore = 0;
+	_verbose = false;
+	_silent = false;
+	_changed = -1;
+	finishFunction = NULL;
+	_mock = false;
+	_improvement = 0;
+	_toDegrees = false;
+	_stream = &std::cout;
+}
+
 void RefinementStrategy::addParameter(void *object, Getter getter, Setter setter, double stepSize, double otherValue, std::string tag, Getter gradient)
 {
 	if (object == NULL)
@@ -166,19 +184,19 @@ void RefinementStrategy::reportProgress(double score)
 	if (cycleNum > 0 && cycleNum % 30 == 0)
 	{
 		double reduction = (startingScore - score) / startingScore;
-		std::cout << std::setprecision(4);
-		std::cout << " (" << std::fixed << -reduction * 100 << "%)";
+		*_stream << std::setprecision(4);
+		*_stream << " (" << std::fixed << -reduction * 100 << "%)";
 
-		std::cout << std::endl;
+		*_stream << std::endl;
 	}
 
 	if (score < _prevScore)
 	{
-		std::cout << "+" << std::flush;
+		*_stream << "+" << std::flush;
 	}
 	else
 	{
-		std::cout << "." << std::flush;
+		*_stream << "." << std::flush;
 	}
 	
 	_prevScore = score;
@@ -195,7 +213,7 @@ void RefinementStrategy::finish()
 		return;
 	}
 	
-	std::cout << std::setprecision(4);
+	*_stream << std::setprecision(4);
 
 	if (endScore >= startingScore || endScore != endScore)
 	{
@@ -205,19 +223,19 @@ void RefinementStrategy::finish()
 		if (!_silent)
 		{
 			double rad2degscale = (_toDegrees ? (180 / M_PI) : 1);
-			std::cout << "No change for " << jobName << " ";
+			*_stream << "No change for " << jobName << " ";
 
 			for (size_t i = 0; i < parameterCount(); i++)
 			{
 				double value = getValueForParam(i);
 				_params[i].changed = 0;
-				std::cout << _params[i].tag << "=" << value * rad2degscale <<
+				*_stream << _params[i].tag << "=" << value * rad2degscale <<
 				(_toDegrees ? "º" : "") << ", ";
 			}
 
-			std::cout << " (" << startingScore << ") ";
+			*_stream << " (" << startingScore << ") ";
 			_timer.quickReport();
-			std::cout << std::endl;
+			*_stream << std::endl;
 		}
 	}
 	else
@@ -226,16 +244,16 @@ void RefinementStrategy::finish()
 		_improvement = -reduction * 100;
 
 		if (!_silent)
-		{std::cout << "Reduction ";
+		{*_stream << "Reduction ";
 			double rad2degscale = (_toDegrees ? (180 / M_PI) : 1);
 
 			if (reduction == reduction)
 			{
-				std::cout << "by " << std::fixed << 
+				*_stream << "by " << std::fixed << 
 				-reduction * 100 << "% ";
 			}
 
-			std::cout << "for " << jobName << ": ";
+			*_stream << "for " << jobName << ": ";
 
 			for (size_t i = 0; i < parameterCount(); i++)
 			{
@@ -244,14 +262,14 @@ void RefinementStrategy::finish()
 				
 				_params[i].changed = (fabs(start - value) > 1e-4);
 				
-				std::cout << _params[i].tag << "=" << value * rad2degscale <<
+				*_stream << _params[i].tag << "=" << value * rad2degscale <<
 				(_toDegrees ? "°" : "") << ", ";
 			}
 
-			std::cout << "(" << startingScore << " to " << 
+			*_stream << "(" << startingScore << " to " << 
 			endScore << ") ";
 			_timer.quickReport();
-			std::cout << std::endl;
+			*_stream << std::endl;
 		}
 
 		_changed = 1;
@@ -283,11 +301,11 @@ void RefinementStrategy::reportResult()
 	if (didChange())
 	{
 		_changed = true;
-		std::cout << std::setw(3) << val << "% improved. ... done. ";
+		*_stream << std::setw(3) << val << "% improved. ... done. ";
 	}
 	else
 	{
-		std::cout << " not improved.   ... done. ";
+		*_stream << " not improved.   ... done. ";
 	}
 }
 
@@ -308,4 +326,11 @@ void RefinementStrategy::findIfSignificant()
 		}
 	}
 
+}
+
+void RefinementStrategy::outputStream()
+{
+	std::ostringstream *o = static_cast<std::ostringstream *>(_stream);
+	std::cout << o->str();
+	o->str("");
 }
