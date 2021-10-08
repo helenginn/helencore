@@ -10,6 +10,7 @@
 #define __vagabond__Timer__
 
 #include <time.h>
+#include <iostream>
 #include <string>
 #include <chrono>
 
@@ -41,7 +42,7 @@ public:
 	}
 	
 	void quickReport();
-	void report();
+	void report(std::ostream *stream = &std::cout);
 private:
 	time_t wall;
 	time_t accumulative;

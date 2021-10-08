@@ -76,7 +76,7 @@ void Timer::stop(bool quick)
 	_milliseconds += time_span.count();
 }
 
-void Timer::report()
+void Timer::report(std::ostream *stream)
 {
 	if (wall > 0)
 	{
@@ -85,17 +85,17 @@ void Timer::report()
 
 	if (_fine)
 	{
-		std::cout << "~ Finely measured time for " << _name << ": ";
-		std::cout <<  std::setprecision(3) << _milliseconds / 1000;
-		std::cout << "s. ~" << std::endl;
-		std::cout << std::endl;
+		*stream << "~ Finely measured time for " << _name << ": ";
+		*stream <<  std::setprecision(3) << _milliseconds / 1000;
+		*stream << "s. ~" << std::endl;
+		*stream << std::endl;
 	}
 	else
 	{
 		time_t seconds = (accumulative % 60);
 		time_t minutes = (accumulative - seconds) / 60;
 
-		std::cout << "~ Clock time for " << _name << ": " << minutes << "m" << seconds << "s. ~" << std::endl;
-		std::cout << std::endl;
+		*stream << "~ Clock time for " << _name << ": " << minutes << "m" << seconds << "s. ~" << std::endl;
+		*stream << std::endl;
 	}
 }
