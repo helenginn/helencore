@@ -77,7 +77,7 @@ typedef struct
 	int idx;
 } OrderW;
 
-bool order_by_w(OrderW &a, OrderW &b) { return a.w > b.w; }
+bool order_by_w(const OrderW &a, const OrderW &b) { return a.w > b.w; }
 
 void Canonical::reorderSVD(SVD *cc)
 {
