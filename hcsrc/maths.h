@@ -101,6 +101,22 @@ inline CorrelData empty_CD()
 }
 
 template <class T>
+inline void add_to_CD(CorrelData *cd, T x, T y, T w)
+{
+	if (x != x || y != y || w != w)
+	{
+		return;
+	}
+
+	cd->sum_x += x * w;
+	cd->sum_y += y * w;
+	cd->sum_yy += y * y * w;
+	cd->sum_xx += x * x * w;
+	cd->sum_xy += x * y * w;
+	cd->sum_w += w;
+}
+
+template <class T>
 inline void add_to_CD(CorrelData *cd, T x, T y)
 {
 	if (x != x || y != y)
