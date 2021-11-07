@@ -20,6 +20,7 @@
 #define __helencore__Canonical__
 
 #include <vector>
+#include "Matrix.h"
 
 class Canonical
 {
@@ -33,40 +34,16 @@ public:
 
 	~Canonical();
 private:
-	typedef struct
-	{
-		double *vals;
-		double **ptrs;
-		int rows;
-		int cols;
-	} Matrix;
-
-	typedef struct
-	{
-		Matrix u;
-		Matrix v;
-		double *w;
-	} SVD;
-
 	void transformVectors(std::vector<double> &vals, int total,
-	                      int chosen, Matrix &basis);
-	void setupMatrix(Matrix *mat, int x, int y = 0);
-	void setupSVD(SVD *cc, int x, int y = 0);
-	void printMatrix(Matrix *mat);
-	void reorderSVD(SVD *cc);
-	void freeMatrix(Matrix *m);
-	void freeSVD(SVD *cc);
-
-	bool runSVD(SVD *cc);
-	bool invertSVD(SVD *cc);
+	                      int chosen, HelenCore::Matrix &basis);
 	int _nSamples;
 	int _m;
 	int _n;
 	int _d;
 	
-	SVD _mmCC, _nnCC;
-	Matrix _mBasis, _nBasis;
-	Matrix _u, _v;
+	HelenCore::SVD _mmCC, _nnCC;
+	HelenCore::Matrix _mBasis, _nBasis;
+	HelenCore::Matrix _u, _v;
 	bool _run;
 	
 	std::vector<double> _mVecs;

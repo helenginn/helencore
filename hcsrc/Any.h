@@ -24,26 +24,38 @@ typedef void (*Refresh)(void *);
 class Any
 {
 public:
-	Any(double *ptr)
+	Any(double *ptr, double scale = 1)
 	{
 		_ptr = ptr;
+		_scale = scale;
+		_initial = *ptr;
+		_value = 0;
 		_g = NULL;
 		_gobj = NULL;
 	}
 	
 	static double get(void *object)
 	{
+		return (static_cast<Any *>(object)->_value);
 		return *(static_cast<Any *>(object)->_ptr);
 	}
 	
+	void pset(double val)
+	{
+		double aim = _initial + (val) * _scale;
+		_value = val;
+		*_ptr = aim;
+
+		if (_g != NULL)
+		{
+			(*_g)(_gobj);
+		}
+	}
+
 	static void set(void *object, double val)
 	{
 		Any *any = static_cast<Any *>(object);
-		*(any->_ptr) = val;
-		if (any->_g != NULL)
-		{
-			(*any->_g)(any->_gobj);
-		}
+		any->pset(val);
 	}
 	
 	void setRefresh(Refresh g, void *object)
@@ -54,6 +66,9 @@ public:
 
 private:
 	double *_ptr;
+	double _initial;
+	double _value;
+	double _scale;
 	Refresh _g;
 	void *_gobj;
 

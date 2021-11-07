@@ -523,11 +523,11 @@ mat3x3 mat3x3_from_2d_array(double **values)
 
 void mat3x3_to_2d_array(mat3x3 mat, double ***values)
 {
-	*values = (double **)malloc(sizeof(double *) * 3);
+	*values = (double **)calloc(3, sizeof(double *));
 
 	for (int j = 0; j < 3; j++)
 	{
-		(*values)[j] = (double *)malloc(sizeof(double) * 3);
+		(*values)[j] = (double *)calloc(3, sizeof(double));
 
 		for (int i = 0; i < 3; i++)
 		{
