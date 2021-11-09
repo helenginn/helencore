@@ -20,6 +20,7 @@
 #include <cmath>
 #include <vector>
 #include "libica/svdcmp.h"
+#include "libica/matrix.h"
 #include <iostream>
 
 void HelenCore::setupMatrix(Matrix *mat, int rows, int cols)
@@ -44,6 +45,18 @@ void HelenCore::setupSVD(SVD *cc, int rows, int cols)
 	setupMatrix(&cc->u, rows, cols);
 	setupMatrix(&cc->v, cols, cols);
 	cc->w = (double *)calloc(cols, sizeof(double));
+}
+
+void HelenCore::multMatrix(Matrix &mat, double *vector)
+{
+	Matrix ret;
+	setupMatrix(&ret, mat.cols, 1);
+	Matrix vect;
+	setupMatrix(&vect, mat.cols, 1);
+	memcpy(vect.vals, vector, sizeof(double) * mat.cols);
+
+	mat_mult(mat.ptrs, mat.rows, mat.cols, vect.ptrs, mat.cols, 1, ret.ptrs);
+	memcpy(vector, ret.vals, sizeof(double) * mat.cols);
 }
 
 void HelenCore::printMatrix(Matrix *mat)

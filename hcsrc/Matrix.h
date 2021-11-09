@@ -42,6 +42,7 @@ namespace HelenCore
 	void setupMatrix(HelenCore::Matrix *mat, int x, int y = 0);
 	void setupSVD(HelenCore::SVD *cc, int x, int y = 0);
 	void printMatrix(HelenCore::Matrix *mat);
+	void multMatrix(Matrix &mat, double *vector);
 	void reorderSVD(HelenCore::SVD *cc);
 	bool invertSVD(HelenCore::SVD *cc);
 	void freeMatrix(HelenCore::Matrix *m);

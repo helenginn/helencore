@@ -29,13 +29,27 @@ public:
 	~Fibonacci();
 
 	void generateLattice(int num, double radius);
+	void hyperLattice(int dims, int num, double radius, double shift);
+
+	std::vector<std::vector<double> > hyperVolume(int dims, int num, 
+	                                              double radius);
+
+	std::vector<std::vector<double> > &getHyperpoints()
+	{
+		return _hyperpoints;
+	}
 
 	std::vector<vec3> &getPoints()
 	{
 		return _points;
 	}
 private:
+	void prepareHyperpoints(int dims, int num);
+	void startHyperpoints(int num, double shift);
+	void nextHyperpoints(int dim, int num);
+
 	std::vector<vec3> _points;
+	std::vector<std::vector<double> > _hyperpoints;
 
 };
 
