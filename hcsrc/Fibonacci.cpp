@@ -111,7 +111,8 @@ void Fibonacci::nextHyperpoints(int dim, int num)
 	}
 }
 
-void Fibonacci::hyperLattice(int dims, int num, double radius, double shift)
+void Fibonacci::hyperLattice(int dims, int used, int num, 
+                             double radius, double shift)
 {
 	if (num % 2 == 0)
 	{
@@ -123,7 +124,7 @@ void Fibonacci::hyperLattice(int dims, int num, double radius, double shift)
 	prepareHyperpoints(dims, num);
 	startHyperpoints(num, shift);
 	
-	for (size_t i = 3; i <= dims; i++)
+	for (size_t i = 3; i <= used; i++)
 	{
 		nextHyperpoints(i, num);
 	}
@@ -138,7 +139,7 @@ void Fibonacci::hyperLattice(int dims, int num, double radius, double shift)
 }
 
 std::vector<std::vector<double> > 
-	Fibonacci::hyperVolume(int dims, int num, double radius)
+	Fibonacci::hyperVolume(int dims, int used, int num, double radius)
 {
 	std::vector<std::vector<double> > fullPoints;
 
@@ -197,7 +198,7 @@ std::vector<std::vector<double> >
 		int samples = layerSurfaces[j] * scale + 1;
 		double offset = 2. / (double)samples;
 		
-		hyperLattice(dims, samples, m, frac);
+		hyperLattice(dims, used, samples, m, frac);
 		fullPoints.insert(fullPoints.end(), _hyperpoints.begin(),
 		                  _hyperpoints.end());
 	}
