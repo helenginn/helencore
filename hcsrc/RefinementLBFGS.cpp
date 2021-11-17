@@ -62,6 +62,8 @@ double RefinementLBFGS::evaluate(void *instance,
 
 	// return a new fx evaluation.
 	double eval = me->evaluationFunction(me->evaluateObject);
+	me->reportProgress(eval);
+
 	/*
 	std::cout << "Evaluation: " << std::setprecision(10) << eval << std::endl;
 	
