@@ -18,6 +18,8 @@
 
 #include "Matrix.h"
 #include <cmath>
+#include <algorithm>
+#include <cstring>
 #include <vector>
 #include "libica/svdcmp.h"
 #include "libica/matrix.h"
