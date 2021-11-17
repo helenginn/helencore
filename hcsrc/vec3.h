@@ -37,6 +37,25 @@ struct vec3
 		return v;
 	}
 
+	template <class T>
+	vec3 operator/(const T &divide)
+	{
+		vec3 v;
+		v.x = x / divide;
+		v.y = y / divide;
+		v.z = z / divide;
+		return v;
+	}
+
+	template <class T>
+	vec3 operator/=(const T &divide)
+	{
+		x /= divide;
+		y /= divide;
+		z /= divide;
+		return *this;
+	}
+
 	vec3 &operator-=(const vec3 &minus)
 	{
 		x -= minus.x;
