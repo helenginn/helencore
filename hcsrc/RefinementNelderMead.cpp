@@ -19,6 +19,7 @@
 #include "RefinementNelderMead.h"
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 
 RefinementNelderMead::RefinementNelderMead() : RefinementStrategy()
 {
@@ -217,10 +218,9 @@ void RefinementNelderMead::setParametersForPoint(int i, double mult)
 		if (i > 0)
 		{
 			int minJ = i - 1;
-			double scale = 1;
 
 			testPoints[i].first[j] = testPoints[0].first[j] + 
-			(j == minJ) * scale * mult * _params[j].step_size;
+			(j == minJ) * mult * _params[j].step_size;
 		}
 	}
 }

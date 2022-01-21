@@ -38,6 +38,16 @@ struct vec3
 	}
 
 	template <class T>
+	vec3 operator*(const T &mult)
+	{
+		vec3 v;
+		v.x = x * mult;
+		v.y = y * mult;
+		v.z = z * mult;
+		return v;
+	}
+
+	template <class T>
 	vec3 operator/(const T &divide)
 	{
 		vec3 v;

@@ -42,8 +42,8 @@ public:
 	
 	void pset(double val)
 	{
-		double aim = _initial + (val) * _scale;
 		_value = val;
+		double aim = _initial + val * _scale;
 		*_ptr = aim;
 
 		if (_g != NULL)
