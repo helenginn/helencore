@@ -60,7 +60,7 @@ inline void pad(std::string &str, char ch, size_t length)
 
 void print_cc_diff(std::ostream *_stream, double diff, int limit);
 
-inline std::vector<std::string> glob(const std::string& pattern) {
+inline std::vector<std::string> glob_pattern(const std::string& pattern) {
 	using namespace std;
 
 	// glob struct resides on the stack
